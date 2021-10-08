@@ -17,8 +17,8 @@ part 'custom_gesture_recognizer.dart';
 typedef void OnChange(double value);
 typedef Widget InnerWidget(double percentage);
 
-
 class SleekCircularSlider extends StatefulWidget {
+  final double initialStart;
   final double initialValue;
   final double min;
   final double max;
@@ -36,6 +36,7 @@ class SleekCircularSlider extends StatefulWidget {
 
   const SleekCircularSlider(
       {Key? key,
+      this.initialStart = 0,
       this.initialValue = 50,
       this.min = 0,
       this.max = 100,
@@ -61,6 +62,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   double? _oldWidgetValue;
   double? _currentAngle;
   late double _startAngle;
+  late double _startAngleOffset;
   late double _angleRange;
   double? _selectedAngle;
   double? _rotation;
@@ -74,6 +76,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   @override
   void initState() {
     super.initState();
+    _startAngleOffset = widget.appearance.startAngleOffset;
     _startAngle = widget.appearance.startAngle;
     _angleRange = widget.appearance.angleRange;
     _appearanceHashCode = widget.appearance.hashCode;
@@ -108,6 +111,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         durationMultiplier: widget.appearance.animDurationMultiplier,
       );
     }
+    _oldWidgetAngle = _startAngleOffset;
 
     _animationManager!.animate(
         initialValue: widget.initialValue,
@@ -190,17 +194,30 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         defaultAngle: defaultAngle,
         counterClockwise: counterClockwise);
 
-    _painter = _CurvePainter(
-        startAngle: _startAngle,
-        angleRange: _angleRange,
-        angle: _currentAngle! < 0.5 ? 0.5 : _currentAngle!,
-        appearance: widget.appearance);
-    _oldWidgetAngle = widget.angle;
-    _oldWidgetValue = widget.initialValue;
+    if(_currentAngle! >= _startAngleOffset){
+
+
+      _painter = _CurvePainter(
+          startAngle: _startAngle,
+          startAngleOffset: _startAngleOffset,
+          angleRange: _angleRange,
+          angle: _currentAngle! < 0.5 ? 0.5 : _currentAngle!,
+          appearance: widget.appearance);
+      _oldWidgetAngle = widget.angle;
+      _oldWidgetValue = widget.initialValue;
+    }else{
+      _currentAngle =_startAngleOffset;
+    }
+
+
+
+
+
   }
 
   void _updateOnChange() {
     if (widget.onChange != null && !_animationInProgress) {
+
       final value =
           angleToValue(_currentAngle!, widget.min, widget.max, _angleRange);
       widget.onChange!(value);
@@ -271,9 +288,13 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     final double touchWidth = widget.appearance.progressBarWidth >= 25.0
         ? widget.appearance.progressBarWidth
         : 25.0;
+    print(isPointAlongCircle(
+        position, _painter!.center!, _painter!.radius, touchWidth));
     if (isPointAlongCircle(
         position, _painter!.center!, _painter!.radius, touchWidth)) {
+
       _selectedAngle = coordinatesToRadians(_painter!.center!, position);
+      print(_selectedAngle);
       // setup painter with new angle values and update onChange
       _setupPainter(counterClockwise: widget.appearance.counterClockwise);
       _updateOnChange();
@@ -302,17 +323,17 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         ? widget.appearance.progressBarWidth
         : 25.0;
 
-    if(!widget.touchOnTrack) {
+    if (!widget.touchOnTrack) {
       Offset handlerOffset = degreesToCoordinates(
-          _painter!.center!, -math.pi / 2 + _startAngle + _currentAngle! + 1.5,
+          _painter!.center!,
+          -math.pi / 2 + _startAngle + _currentAngle!+ 1.5,
           _painter!.radius);
       if (!Rect.fromCenter(
-          center: position, width: touchWidth, height: touchWidth).contains(
-          handlerOffset)) {
+              center: position, width: touchWidth, height: touchWidth)
+          .contains(handlerOffset)) {
         return false;
       }
     }
-
 
     if (isPointAlongCircle(
         position, _painter!.center!, _painter!.radius, touchWidth)) {

@@ -4,6 +4,7 @@ class _CurvePainter extends CustomPainter {
   final double angle;
   final CircularSliderAppearance appearance;
   final double startAngle;
+  final double startAngleOffset;
   final double angleRange;
 
   Offset? handler;
@@ -11,7 +12,7 @@ class _CurvePainter extends CustomPainter {
   late double radius;
 
   _CurvePainter(
-      {required this.appearance, this.angle = 30, required this.startAngle, required this.angleRange});
+      {required this.appearance, this.angle = 30, required this.startAngle, required this.angleRange, required this.startAngleOffset});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -112,10 +113,11 @@ class _CurvePainter extends CustomPainter {
     final double angleValue = ignoreAngle ? 0 : (angleRange - angle);
     final range = appearance.counterClockwise ? -angleRange : angleRange;
     final currentAngle = appearance.counterClockwise ? angleValue : -angleValue;
+    final _startAngleOffset = ignoreAngle ? 0 :startAngleOffset;
     canvas.drawArc(
         Rect.fromCircle(center: center!, radius: radius),
-        degreeToRadians(spinnerMode ? 0 : startAngle),
-        degreeToRadians(spinnerMode ? 360 : range + currentAngle),
+        degreeToRadians(spinnerMode ? 0 : startAngle + _startAngleOffset),
+        degreeToRadians(spinnerMode ? 360 : range + currentAngle - _startAngleOffset),
         false,
         paint);
   }

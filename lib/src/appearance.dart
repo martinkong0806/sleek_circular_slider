@@ -5,6 +5,7 @@ typedef String PercentageModifier(double percentage);
 class CircularSliderAppearance {
   static const double _defaultSize = 150.0;
   static const double _defaultStartAngle = 150.0;
+  static const double _defaultStartAngleOffset = 0.0;
   static const double _defaultAngleRange = 240.0;
 
   static const Color _defaultTrackColor = Color.fromRGBO(220, 190, 251, 1.0);
@@ -32,6 +33,7 @@ class CircularSliderAppearance {
 
   final double size;
   final double startAngle;
+  final double startAngleOffset;
   final double angleRange;
   final bool animationEnabled;
   final bool spinnerMode;
@@ -58,14 +60,17 @@ class CircularSliderAppearance {
       if (customColors!.progressBarColors != null) {
         return customColors!.progressBarColors;
       } else if (customColors!.progressBarColor != null) {
-        return [customColors!.progressBarColor!, customColors!.progressBarColor!];
+        return [
+          customColors!.progressBarColor!,
+          customColors!.progressBarColor!
+        ];
       }
     }
     return null;
   }
 
   List<Color>? get _customTrackColors {
-  	return customColors?.trackColors;
+    return customColors?.trackColors;
   }
 
   double? get _gradientStartAngle => customColors?.gradientStartAngle;
@@ -110,24 +115,27 @@ class CircularSliderAppearance {
   String? get infoTopLabelText => _topLabelText;
   String? get infoBottomLabelText => _bottomLabelText;
   TextStyle get infoMainLabelStyle {
-    return _mainLabelStyle ?? TextStyle(
-        fontWeight: FontWeight.w100,
-        fontSize: size / 5.0,
-        color: Color.fromRGBO(30, 0, 59, 1.0));
+    return _mainLabelStyle ??
+        TextStyle(
+            fontWeight: FontWeight.w100,
+            fontSize: size / 5.0,
+            color: Color.fromRGBO(30, 0, 59, 1.0));
   }
 
   TextStyle get infoTopLabelStyle {
-    return _topLabelStyle ?? TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: size / 10.0,
-        color: Color.fromRGBO(147, 81, 120, 1.0));
+    return _topLabelStyle ??
+        TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: size / 10.0,
+            color: Color.fromRGBO(147, 81, 120, 1.0));
   }
 
   TextStyle get infoBottomLabelStyle {
-    return _bottomLabelStyle ?? TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: size / 10.0,
-        color: Color.fromRGBO(147, 81, 120, 1.0));
+    return _bottomLabelStyle ??
+        TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: size / 10.0,
+            color: Color.fromRGBO(147, 81, 120, 1.0));
   }
 
   const CircularSliderAppearance(
@@ -135,6 +143,7 @@ class CircularSliderAppearance {
       this.customColors,
       this.size = _defaultSize,
       this.startAngle = _defaultStartAngle,
+      this.startAngleOffset = _defaultStartAngleOffset,
       this.angleRange = _defaultAngleRange,
       this.infoProperties,
       this.animationEnabled = true,
