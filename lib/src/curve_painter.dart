@@ -69,10 +69,7 @@ class _CurvePainter extends CustomPainter {
     final GradientRotation rotation =
         GradientRotation(degreeToRadians(gradientRotationAngle));
 
-    // print("""
-    // start Angle : $startAngleOffset
-    // end Angle : $currentAngle
-    // """);
+
     final gradientStartAngle = dynamicGradient
         ? appearance.counterClockwise
             ? 360.0 - currentAngle.abs()
@@ -151,6 +148,10 @@ class _CurvePainter extends CustomPainter {
     final _startAngleOffset = ignoreAngle ? 0 :startAngleOffset;
     final temp = angle%360;
     final finalAngle = temp > _startAngleOffset ? temp : temp+360;
+    // print("""
+    //     start Angle : $startAngleOffset
+    //     end Angle : $finalAngle
+    //     """);
 
     canvas.drawArc(
         Rect.fromCircle(center: center!, radius: radius),

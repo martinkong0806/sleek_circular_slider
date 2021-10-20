@@ -57,6 +57,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     with SingleTickerProviderStateMixin {
   // bool _isHandlerSelected = false;
   int _handleState = 0;
+
   bool _animationInProgress = false;
   _CurvePainter? _painter;
   double? _oldWidgetAngle;
@@ -65,6 +66,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   late double _startAngle;
   late double _startAngleOffset;
   late double _angleRange;
+  late List<double> _positionOnChangeStart;
   double? _selectedAngle;
   double? _rotation;
   SpinAnimationManager? _spinManager;
@@ -81,6 +83,15 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     _startAngle = widget.appearance.startAngle;
     _angleRange = widget.appearance.angleRange;
     _appearanceHashCode = widget.appearance.hashCode;
+    double t = widget.initialValue;
+
+    _currentAngle = calculateAngle(
+        startAngle: _startAngle,
+        angleRange: _angleRange,
+        selectedAngle: degreeToRadians( (widget.angle + _startAngle)%360),
+        defaultAngle: _currentAngle ?? widget.angle,
+        counterClockwise: false);
+
 
     if (!widget.appearance.animationEnabled) {
       return;
@@ -188,22 +199,65 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
       }
     }
 
-    if(_handleState==2||_handleState==0){
-      _currentAngle = calculateAngle(
+    if (_handleState == 2) {
+      // _currentAngle = calculateAngle(
+      //     startAngle: _startAngle,
+      //     angleRange: _angleRange,
+      //     selectedAngle: _selectedAngle,
+      //     defaultAngle: defaultAngle,
+      //     counterClockwise: counterClockwise);
+
+
+      double angle = calculateAngle(
           startAngle: _startAngle,
           angleRange: _angleRange,
           selectedAngle: _selectedAngle,
           defaultAngle: defaultAngle,
           counterClockwise: counterClockwise);
+
+      if (((angle-_startAngleOffset) % 360 > 20)
+          && (( _currentAngle! - angle  ).abs() % 360< 20 || (_currentAngle! - angle  ).abs() % 360>340)
+      ) {
+        _currentAngle = angle;
+      }else{
+      }
     }
 
-    if(_handleState==1){
-      _startAngleOffset = calculateAngle(
+    if (_handleState == 0) {
+
+    }
+
+    if (_handleState == 1) {
+      double angle = calculateAngle(
           startAngle: _startAngle,
           angleRange: _angleRange,
           selectedAngle: _selectedAngle,
           defaultAngle: defaultAngle,
           counterClockwise: counterClockwise);
+
+      if (((_currentAngle! - angle) % 360 > 20)
+          && ((angle - _startAngleOffset ).abs() % 360< 20 || (angle - _startAngleOffset ).abs() % 360>340)
+      ) {
+        _startAngleOffset = angle;
+      }else{
+      }
+
+
+      // if(angle-_startAngleOffset<=10){
+      //   _startAngleOffset = angle;
+      // }
+
+      // if(((_startAngleOffset + 1).ceil()%359 ==_positionOnChangeStart[1].floor())){
+      //   _startAngleOffset = _startAngleOffset-1;
+      //   if (_startAngleOffset <0){
+      //     _startAngleOffset =359;
+      //   }
+      //
+      //
+      // }
+
+
+
     }
 
 
@@ -211,11 +265,10 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         startAngle: _startAngle,
         startAngleOffset: _startAngleOffset,
         angleRange: _angleRange,
-        angle: _currentAngle!  < 0.5 ? 0.5 : _currentAngle!,
+        angle: _currentAngle! < 0.5 ? 0.5 : _currentAngle!,
         appearance: widget.appearance);
     _oldWidgetAngle = widget.angle;
     _oldWidgetValue = widget.initialValue;
-
 
     // if (_currentAngle! >= _startAngleOffset) {
     //
@@ -228,7 +281,10 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     if (widget.onChange != null && !_animationInProgress) {
       final value =
           angleToValue(_currentAngle!, widget.min, widget.max, _angleRange);
-      widget.onChange!(angleToValue(_startAngleOffset, widget.min, widget.max, _angleRange),value,_handleState);
+      widget.onChange!(
+          angleToValue(_startAngleOffset, widget.min, widget.max, _angleRange),
+          value,
+          _handleState);
     }
   }
 
@@ -268,7 +324,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   }
 
   void _onPanUpdate(Offset details) {
-    if (_handleState==0) {
+    if (_handleState == 0) {
       return;
     }
     if (_painter?.center == null) {
@@ -283,11 +339,10 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
       widget.onChangeEnd!(
           angleToValue(_startAngleOffset, widget.min, widget.max, _angleRange),
           angleToValue(_currentAngle!, widget.min, widget.max, _angleRange),
-          _handleState
-      );
+          _handleState);
     }
 
-    _handleState =0;
+    _handleState = 0;
   }
 
   void _handlePan(Offset details, bool isPanEnd) {
@@ -304,11 +359,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     if (isPointAlongCircle(
         position, _painter!.center!, _painter!.radius, touchWidth)) {}
 
-
-      _selectedAngle = coordinatesToRadians(_painter!.center!, position);
-
-
-
+    _selectedAngle = coordinatesToRadians(_painter!.center!, position);
 
     // setup painter with new angle values and update onChange
     _setupPainter(counterClockwise: widget.appearance.counterClockwise);
@@ -342,7 +393,6 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
 
     if (!widget.touchOnTrack) {
       _handleState = getHandle(position, touchWidth);
-
     }
 
     if (isPointAlongCircle(
@@ -350,11 +400,13 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
       _handleState = getHandle(position, touchWidth);
       if (widget.onChangeStart != null) {
         widget.onChangeStart!(
-            angleToValue(_startAngleOffset, widget.min, widget.max, _angleRange),
-          angleToValue(_currentAngle!, widget.min, widget.max, _angleRange),
-          _handleState
-        );
+            angleToValue(
+                _startAngleOffset, widget.min, widget.max, _angleRange),
+            angleToValue(_currentAngle!, widget.min, widget.max, _angleRange),
+            _handleState);
       }
+
+      _positionOnChangeStart = [_startAngleOffset, _currentAngle!];
       _onPanUpdate(details);
     } else {
       _handleState = 0;
@@ -363,22 +415,17 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     return _handleState != 0;
   }
 
-  int getHandle(position, touchWidth){
-    Offset handlerOffsetEnd = degreesToCoordinates(
-        _painter!.center!,
-        -math.pi / 2 + _startAngle + _currentAngle! + 1.5,
-        _painter!.radius);
-    Offset handlerOffsetStart = degreesToCoordinates(
-        _painter!.center!,
-        -math.pi / 2 + _startAngle + _startAngleOffset + 1.5,
-        _painter!.radius);
+  int getHandle(position, touchWidth) {
+    Offset handlerOffsetEnd = degreesToCoordinates(_painter!.center!,
+        -math.pi / 2 + _startAngle + _currentAngle! + 1.5, _painter!.radius);
+    Offset handlerOffsetStart = degreesToCoordinates(_painter!.center!,
+        -math.pi / 2 + _startAngle + _startAngleOffset + 1.5, _painter!.radius);
 
-    if (Rect.fromCenter(
-        center: position, width: touchWidth, height: touchWidth)
+    if (Rect.fromCenter(center: position, width: touchWidth, height: touchWidth)
         .contains(handlerOffsetEnd)) {
       return 2;
     } else if (Rect.fromCenter(
-        center: position, width: touchWidth, height: touchWidth)
+            center: position, width: touchWidth, height: touchWidth)
         .contains(handlerOffsetStart)) {
       return 1;
     } else {
