@@ -72,6 +72,33 @@ double calculateRawAngle(
   return calcAngle;
 }
 
+double calculateRawAngleNeg90(
+    {required double startAngle,
+      required double angleRange,
+      required double selectedAngle,
+      required double startOffset,
+      bool counterClockwise = false}) {
+  double angle = radiansToDegrees(selectedAngle);
+
+
+
+  double calcAngle = 0.0;
+  if (!counterClockwise) {
+    if (angle >= startAngle  && angle <= 360.0) {
+      calcAngle = angle - startAngle;
+    } else {
+      calcAngle = 360.0 - startAngle + angle;
+    }
+  } else {
+    if (angle <= startAngle) {
+      calcAngle = startAngle - angle;
+    } else {
+      calcAngle = 360.0 - angle + startAngle;
+    }
+  }
+  return calcAngle;
+}
+
 double calculateAngle(
     {required double startAngle,
     required double angleRange,
@@ -87,6 +114,37 @@ double calculateAngle(
       angleRange: angleRange,
       selectedAngle: selectedAngle,
       counterClockwise: counterClockwise);
+
+
+  if (calcAngle - angleRange > (360.0 - angleRange) * 0.5) {
+    return 0.0;
+  } else if (calcAngle > angleRange) {
+    return angleRange;
+  }
+
+  return calcAngle;
+}
+
+double calculateAngleWithNeg(
+    {required double startAngle,
+      required double angleRange,
+      required selectedAngle,
+      required startOffset,
+      required defaultAngle,
+      bool counterClockwise = false}) {
+  if (selectedAngle == null) {
+    return defaultAngle;
+  }
+
+  double calcAngle = calculateRawAngleNeg90(
+      startAngle: startAngle,
+      angleRange: angleRange,
+      selectedAngle: selectedAngle,
+      startOffset: startOffset,
+      counterClockwise: counterClockwise);
+
+  // print(calcAngle);
+
 
   if (calcAngle - angleRange > (360.0 - angleRange) * 0.5) {
     return 0.0;

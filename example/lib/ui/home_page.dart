@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:example/ui/schedule.dart';
 import 'package:example/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -13,9 +14,9 @@ final CircularSliderAppearance appearance01 = CircularSliderAppearance();
 final viewModel01 = ExampleViewModel(
     appearance: appearance01,
     min: 0,
-    max: 100,
+    max: 120,
     value: 60,
-    touchOnTrack:false,
+    touchOnTrack:true,
     pageColors: [Colors.white, HexColor('#E1C3FF')]);
 final example01 = ExamplePage(
   viewModel: viewModel01,
@@ -82,13 +83,15 @@ final CircularSliderAppearance appearance03 = CircularSliderAppearance(
     customColors: customColors03,
     infoProperties: info03,
     size: 250.0,
-    startAngle: 180,
-    angleRange: 340);
+    startAngle: 270,
+    startAngleOffset: 0,
+    angleRange:  360);
 final viewModel03 = ExampleViewModel(
     appearance: appearance03,
-    min: 500,
-    max: 2300,
-    value: 1623,
+    touchOnTrack: false,
+    min: 0,
+    max: 2400,
+    value: 0,
     pageColors: [HexColor('#D9FFF7'), HexColor('#FFFFFF')]);
 final example03 = ExamplePage(
   viewModel: viewModel03,
@@ -395,18 +398,20 @@ class _HomePageState extends State<HomePage> {
         child: PageView(
       controller: controller,
       children: <Widget>[
-        example01,
-        example10,
-        RandomValuePage(),
-        example03,
-        example04,
-        example02,
-        example05,
-        example09,
-        example08,
-        example06,
-        example07,
-        Clock(),
+        // example01,
+        // example10,
+        // RandomValuePage(),
+        // example03,
+        // example04,
+        // example02,
+        // example05,
+        // example09,
+        // example08,
+        // example06,
+        // example07,
+        // Clock(),
+        Schedule()
+
       ],
     ));
   }

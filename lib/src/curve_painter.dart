@@ -22,6 +22,8 @@ class _CurvePainter extends CustomPainter {
 
     final progressBarRect = Rect.fromLTWH(0.0, 0.0, size.width, size.width);
 
+
+
     Paint trackPaint;
     if (appearance.trackColors != null) {
       final trackGradient = SweepGradient(
@@ -49,11 +51,15 @@ class _CurvePainter extends CustomPainter {
         ignoreAngle: true,
         spinnerMode: appearance.spinnerMode);
 
+
+
     if (!appearance.hideShadow) {
       drawShadow(canvas: canvas, size: size);
     }
 
     final currentAngle = appearance.counterClockwise ? -angle : angle;
+
+
     final dynamicGradient = appearance.dynamicGradient;
     final gradientRotationAngle = dynamicGradient
         ? appearance.counterClockwise
@@ -63,10 +69,14 @@ class _CurvePainter extends CustomPainter {
     final GradientRotation rotation =
         GradientRotation(degreeToRadians(gradientRotationAngle));
 
+    print("""
+    start Angle : $startAngleOffset
+    end Angle : $currentAngle
+    """);
     final gradientStartAngle = dynamicGradient
         ? appearance.counterClockwise
             ? 360.0 - currentAngle.abs()
-            : 0.0
+            : -90.0
         : appearance.gradientStartAngle;
     final gradientEndAngle = dynamicGradient
         ? appearance.counterClockwise
@@ -89,19 +99,73 @@ class _CurvePainter extends CustomPainter {
             tileMode: TileMode.mirror,
             colors: colors,
           );
+    // final progressBarGradient = kIsWeb
+    //     ? LinearGradient(
+    //   tileMode: TileMode.mirror,
+    //   colors: colors,
+    // )
+    //     : SweepGradient(
+    //   transform: rotation,
+    //   startAngle: degreeToRadians(-90),
+    //   endAngle: degreeToRadians(180),
+    //   tileMode: TileMode.mirror,
+    //   colors: colors,
+    // );
 
     final progressBarPaint = Paint()
       ..shader = progressBarGradient.createShader(progressBarRect)
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
       ..strokeWidth = appearance.progressBarWidth;
-    drawCircularArc(canvas: canvas, size: size, paint: progressBarPaint);
+    drawProgressBar(canvas: canvas, size: size, paint: progressBarPaint);
 
     var dotPaint = Paint()..color = appearance.dotColor;
 
-    Offset handler = degreesToCoordinates(
-        center!, -math.pi / 2 + startAngle + currentAngle + 1.5, radius);
-    canvas.drawCircle(handler, appearance.handlerSize, dotPaint);
+
+
+
+
+
+
+    Offset startHandler = degreesToCoordinates(
+        center!, -math.pi / 2 + startAngle +  startAngleOffset +  1.5, radius);
+    canvas.drawCircle(startHandler, appearance.handlerSize, dotPaint);
+
+
+    Offset endHandler = degreesToCoordinates(
+        center!, -math.pi / 2 + startAngle + currentAngle  + 1.5, radius);
+    canvas.drawCircle(endHandler, appearance.handlerSize, dotPaint);
+  }
+
+  drawProgressBar(
+      {required Canvas canvas,
+        required Size size,
+        required Paint paint,
+        bool ignoreAngle = false,
+        bool spinnerMode = false}) {
+
+    final double angleValue = ignoreAngle ? 0 : (angleRange - angle);
+
+    final range = appearance.counterClockwise ? -angleRange : angleRange;
+    final currentAngle = appearance.counterClockwise ? angleValue : -angleValue;
+    final _startAngleOffset = ignoreAngle ? 0 :startAngleOffset;
+    final temp = angle%360;
+    final finalAngle = temp > _startAngleOffset ? temp : temp+360;
+
+    canvas.drawArc(
+        Rect.fromCircle(center: center!, radius: radius),
+        degreeToRadians(spinnerMode ? 0 : startAngle + _startAngleOffset),
+        degreeToRadians(spinnerMode ? 360 :  finalAngle -_startAngleOffset),
+        false,
+        paint);
+
+    // canvas.drawArc(
+    //     Rect.fromCircle(center: center!, radius: radius),
+    //     degreeToRadians(spinnerMode ? 0 : startAngle + _startAngleOffset),
+    //     degreeToRadians(range + finalAngle - _startAngleOffset),
+    //     false,
+    //     paint);
+
   }
 
   drawCircularArc(
@@ -110,16 +174,32 @@ class _CurvePainter extends CustomPainter {
       required Paint paint,
       bool ignoreAngle = false,
       bool spinnerMode = false}) {
+
     final double angleValue = ignoreAngle ? 0 : (angleRange - angle);
+
     final range = appearance.counterClockwise ? -angleRange : angleRange;
     final currentAngle = appearance.counterClockwise ? angleValue : -angleValue;
     final _startAngleOffset = ignoreAngle ? 0 :startAngleOffset;
+    final temp = angle%360;
+    final finalAngle = temp > _startAngleOffset ? temp : temp+360;
+    print("""
+    start Angle : $startAngleOffset
+    end Angle : $finalAngle
+    """);
+    // canvas.drawArc(
+    //     Rect.fromCircle(center: center!, radius: radius),
+    //     degreeToRadians(spinnerMode ? 0 : startAngle + _startAngleOffset),
+    //     degreeToRadians(spinnerMode ? 360 :  finalAngle -_startAngleOffset),
+    //     false,
+    //     paint);
+
     canvas.drawArc(
         Rect.fromCircle(center: center!, radius: radius),
-        degreeToRadians(spinnerMode ? 0 : startAngle + _startAngleOffset),
-        degreeToRadians(spinnerMode ? 360 : range + currentAngle - _startAngleOffset),
+        degreeToRadians(spinnerMode ? 0 : startAngle ),
+        degreeToRadians(range ),
         false,
         paint);
+
   }
 
   drawShadow({required Canvas canvas, required Size size}) {
