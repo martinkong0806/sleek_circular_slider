@@ -14,7 +14,7 @@ import 'utils.dart';
 part 'curve_painter.dart';
 part 'custom_gesture_recognizer.dart';
 
-typedef void OnChange(double value);
+typedef void OnChange(double startPoint, double endPoint, int state);
 typedef Widget InnerWidget(double percentage);
 
 class SleekCircularSlider extends StatefulWidget {
@@ -228,7 +228,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     if (widget.onChange != null && !_animationInProgress) {
       final value =
           angleToValue(_currentAngle!, widget.min, widget.max, _angleRange);
-      widget.onChange!(value);
+      widget.onChange!(angleToValue(_startAngleOffset, widget.min, widget.max, _angleRange),value,_handleState);
     }
   }
 
@@ -281,7 +281,10 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     _handlePan(details, true);
     if (widget.onChangeEnd != null) {
       widget.onChangeEnd!(
-          angleToValue(_currentAngle!, widget.min, widget.max, _angleRange));
+          angleToValue(_startAngleOffset, widget.min, widget.max, _angleRange),
+          angleToValue(_currentAngle!, widget.min, widget.max, _angleRange),
+          _handleState
+      );
     }
 
     _handleState =0;
@@ -347,7 +350,10 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
       _handleState = getHandle(position, touchWidth);
       if (widget.onChangeStart != null) {
         widget.onChangeStart!(
-            angleToValue(_currentAngle!, widget.min, widget.max, _angleRange));
+            angleToValue(_startAngleOffset, widget.min, widget.max, _angleRange),
+          angleToValue(_currentAngle!, widget.min, widget.max, _angleRange),
+          _handleState
+        );
       }
       _onPanUpdate(details);
     } else {
