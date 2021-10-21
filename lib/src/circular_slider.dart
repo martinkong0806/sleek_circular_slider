@@ -28,8 +28,14 @@ class SleekCircularSlider extends StatefulWidget {
   final OnChange? onChangeStart;
   final OnChange? onChangeEnd;
   final InnerWidget? innerWidget;
+
+  final List<double>? externalRestrictions;
   static const defaultAppearance = CircularSliderAppearance();
 
+
+  double get startOffset {
+    return valueToAngle(initialStart, min, max, appearance.angleRange);
+  }
   double get angle {
     return valueToAngle(initialValue, min, max, appearance.angleRange);
   }
@@ -45,7 +51,9 @@ class SleekCircularSlider extends StatefulWidget {
       this.onChange,
       this.onChangeStart,
       this.onChangeEnd,
-      this.innerWidget})
+      this.innerWidget,
+      this.externalRestrictions
+      })
       : assert(min <= max),
         assert(initialValue >= min && initialValue <= max),
         super(key: key);
@@ -79,11 +87,15 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   @override
   void initState() {
     super.initState();
-    _startAngleOffset = widget.appearance.startAngleOffset;
+    _startAngleOffset = widget.startOffset;
     _startAngle = widget.appearance.startAngle;
     _angleRange = widget.appearance.angleRange;
     _appearanceHashCode = widget.appearance.hashCode;
-    double t = widget.initialValue;
+
+
+
+
+
 
     _currentAngle = calculateAngle(
         startAngle: _startAngle,
@@ -102,10 +114,13 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
 
   @override
   void didUpdateWidget(SleekCircularSlider oldWidget) {
+    _setupPainter(passive: true);
+    // print(widget.externalRestrictions!);
     if (oldWidget.angle != widget.angle &&
         _currentAngle?.toStringAsFixed(4) != widget.angle.toStringAsFixed(4)) {
       _animate();
     }
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -123,7 +138,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         durationMultiplier: widget.appearance.animDurationMultiplier,
       );
     }
-    _oldWidgetAngle = _startAngleOffset;
+    _oldWidgetAngle = widget.startOffset;
 
     _animationManager!.animate(
         initialValue: widget.initialValue,
@@ -190,7 +205,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     super.dispose();
   }
 
-  void _setupPainter({bool counterClockwise = false}) {
+  void _setupPainter({bool counterClockwise = false, bool passive = false}) {
     var defaultAngle = _currentAngle ?? widget.angle;
     if (_oldWidgetAngle != null) {
       if (_oldWidgetAngle != widget.angle) {
@@ -198,6 +213,16 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         defaultAngle = widget.angle;
       }
     }
+
+    if (passive){
+      _startAngleOffset = calculateAngle(
+          startAngle: _startAngle,
+          angleRange: _angleRange,
+          selectedAngle: degreeToRadians( (widget.startOffset + _startAngle)%360),
+          defaultAngle: defaultAngle,
+          counterClockwise: counterClockwise);
+    }
+
 
     if (_handleState == 2) {
       // _currentAngle = calculateAngle(
@@ -218,7 +243,16 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
       if (((angle-_startAngleOffset) % 360 > 20)
           && (( _currentAngle! - angle  ).abs() % 360< 20 || (_currentAngle! - angle  ).abs() % 360>340)
       ) {
-        _currentAngle = angle;
+        if(widget.externalRestrictions!=null){
+          if((angle-widget.externalRestrictions![1]).abs()<=20){
+          }else{
+            _currentAngle = angle;
+          }
+        }else{
+          _currentAngle = angle;
+        }
+
+
       }else{
       }
     }
@@ -235,10 +269,20 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
           defaultAngle: defaultAngle,
           counterClockwise: counterClockwise);
 
+      print(angle-widget.externalRestrictions![0]+20);
       if (((_currentAngle! - angle) % 360 > 20)
           && ((angle - _startAngleOffset ).abs() % 360< 20 || (angle - _startAngleOffset ).abs() % 360>340)
       ) {
-        _startAngleOffset = angle;
+        if(widget.externalRestrictions!=null){
+          if((angle-widget.externalRestrictions![0]).abs()<=20){
+          }else{
+            _startAngleOffset = angle;
+          }
+        }else{
+          _startAngleOffset = angle;
+        }
+
+
       }else{
       }
 
@@ -380,9 +424,13 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         touchAngle: coordinatesToRadians(_painter!.center!, position),
         previousAngle: _currentAngle,
         counterClockwise: widget.appearance.counterClockwise);
+
+
     if (!angleWithinRange) {
       return false;
     }
+
+
 
     final double touchWidth = widget.appearance.progressBarWidth >= 25.0
         ? widget.appearance.progressBarWidth

@@ -206,7 +206,7 @@ final customWidth03 =
     CustomSliderWidths(trackWidth: 8, progressBarWidth: 20, shadowWidth: 40);
 final customColors03 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.8),
-    trackColor: HexColor('#EFC8FC').withOpacity(0.3),
+    trackColor: HexColor('#EFC8FC').withOpacity(0),
     progressBarColor: HexColor('#A177B0'),
     shadowColor: HexColor('#EFC8FC'),
     shadowStep: 20.0,
