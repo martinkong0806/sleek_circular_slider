@@ -77,7 +77,10 @@ class ValueChangedAnimationManager {
       double? oldAngle,
       required ValueChangeAnimation valueChangedAnimation}) {
     _animationCompleted = false;
-
+    print("""initialValue $initialValue,
+    oldValue $oldValue,
+    angle $angle,
+    oldAngle $oldAngle""");
     final duration = (durationMultiplier *
             valueToDuration(
                 initialValue, oldValue ?? minValue, minValue, maxValue))
@@ -102,6 +105,18 @@ class ValueChangedAnimationManager {
               _animController.reset();
             }
           });
+    // _animation =
+    //     Tween<double>(begin: 233, end: 50).animate(curvedAnimation)
+    //       ..addListener(() {
+    //         valueChangedAnimation(_animation.value, _animationCompleted);
+    //       })
+    //       ..addStatusListener((status) {
+    //         if (status == AnimationStatus.completed) {
+    //           _animationCompleted = true;
+    //
+    //           _animController.reset();
+    //         }
+    //       });
     _animController.forward();
   }
 

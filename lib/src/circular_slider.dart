@@ -64,6 +64,10 @@ class SleekCircularSlider extends StatefulWidget {
 class _SleekCircularSliderState extends State<SleekCircularSlider>
     with SingleTickerProviderStateMixin {
   // bool _isHandlerSelected = false;
+
+  // _handleState = 0 : no validate gesture detected
+  // 1 : moving start handler
+  // 2 : moveing end handler
   int _handleState = 0;
 
   bool _animationInProgress = false;
@@ -92,11 +96,6 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     _angleRange = widget.appearance.angleRange;
     _appearanceHashCode = widget.appearance.hashCode;
 
-
-
-
-
-
     _currentAngle = calculateAngle(
         startAngle: _startAngle,
         angleRange: _angleRange,
@@ -118,6 +117,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     // print(widget.externalRestrictions!);
     if (oldWidget.angle != widget.angle &&
         _currentAngle?.toStringAsFixed(4) != widget.angle.toStringAsFixed(4)) {
+
       _animate();
     }
 
@@ -125,6 +125,11 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   }
 
   void _animate() {
+    // print(""""
+    //
+    // initialValue: ${widget.initialValue},
+    // angle: ${widget.angle},
+    // """);
     if (!widget.appearance.animationEnabled || widget.appearance.spinnerMode) {
       _setupPainter();
       _updateOnChange();
@@ -156,6 +161,8 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
             }
           });
         }));
+    // _oldWidgetAngle = widget.angle;
+    // _oldWidgetValue = widget.initialValue;
   }
 
   void _spin() {
@@ -213,7 +220,8 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         defaultAngle = widget.angle;
       }
     }
-
+    /// This code will only occurs when external sliders is
+    /// affecting this slider
     if (passive){
       _startAngleOffset = calculateAngle(
           startAngle: _startAngle,
@@ -222,44 +230,35 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
           defaultAngle: defaultAngle,
           counterClockwise: counterClockwise);
     }
-
+    /// calculate the angle derived from the gesture.
+    double gestureCalcAngle = calculateAngle(
+        startAngle: _startAngle,
+        angleRange: _angleRange,
+        selectedAngle: _selectedAngle,
+        defaultAngle: defaultAngle,
+        counterClockwise: counterClockwise);
 
     if (_handleState == 2) {
-      // _currentAngle = calculateAngle(
-      //     startAngle: _startAngle,
-      //     angleRange: _angleRange,
-      //     selectedAngle: _selectedAngle,
-      //     defaultAngle: defaultAngle,
-      //     counterClockwise: counterClockwise);
-
-
-      double angle = calculateAngle(
-          startAngle: _startAngle,
-          angleRange: _angleRange,
-          selectedAngle: _selectedAngle,
-          defaultAngle: defaultAngle,
-          counterClockwise: counterClockwise);
-
-      if (((angle-_startAngleOffset) % 360 > 20)
-          && (( _currentAngle! - angle  ).abs() % 360< 20 || (_currentAngle! - angle  ).abs() % 360>340)
+      if (
+      // Only allows movement within a defined degree, this prevent
+      // the slider width increase to the maximum value if the slider
+      // approaches zero
+      ((gestureCalcAngle-_startAngleOffset) % 360 > 20)
+          && (( _currentAngle! - gestureCalcAngle ).abs() % 360< 20 || (_currentAngle! - gestureCalcAngle ).abs() % 360>340)
       ) {
         if(widget.externalRestrictions!=null){
-          if((angle-widget.externalRestrictions![1]).abs()<=20){
+          if((gestureCalcAngle-widget.externalRestrictions![1]).abs()<=20){
           }else{
-            _currentAngle = angle;
+            _currentAngle = gestureCalcAngle;
           }
         }else{
-          _currentAngle = angle;
+          _currentAngle = gestureCalcAngle ;
         }
 
 
-      }else{
       }
     }
 
-    if (_handleState == 0) {
-
-    }
 
     if (_handleState == 1) {
       double angle = calculateAngle(
@@ -287,20 +286,6 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
       }
 
 
-      // if(angle-_startAngleOffset<=10){
-      //   _startAngleOffset = angle;
-      // }
-
-      // if(((_startAngleOffset + 1).ceil()%359 ==_positionOnChangeStart[1].floor())){
-      //   _startAngleOffset = _startAngleOffset-1;
-      //   if (_startAngleOffset <0){
-      //     _startAngleOffset =359;
-      //   }
-      //
-      //
-      // }
-
-
 
     }
 
@@ -314,11 +299,6 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     _oldWidgetAngle = widget.angle;
     _oldWidgetValue = widget.initialValue;
 
-    // if (_currentAngle! >= _startAngleOffset) {
-    //
-    // } else {
-    //   _currentAngle = _startAngleOffset;
-    // }
   }
 
   void _updateOnChange() {
