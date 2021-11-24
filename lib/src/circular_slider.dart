@@ -117,7 +117,6 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
     // print(widget.externalRestrictions!);
     if (oldWidget.angle != widget.angle &&
         _currentAngle?.toStringAsFixed(4) != widget.angle.toStringAsFixed(4)) {
-
       _animate();
     }
 
@@ -136,6 +135,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
       return;
     }
     if (_animationManager == null) {
+
       _animationManager = ValueChangedAnimationManager(
         tickerProvider: this,
         minValue: widget.min,
@@ -143,6 +143,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         durationMultiplier: widget.appearance.animDurationMultiplier,
       );
     }
+
     _oldWidgetAngle = widget.startOffset;
 
     _animationManager!.animate(
@@ -152,6 +153,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         oldValue: _oldWidgetValue,
         valueChangedAnimation: ((double anim, bool animationCompleted) {
           _animationInProgress = !animationCompleted;
+          // print(anim);
           setState(() {
             if (!animationCompleted) {
               _currentAngle = anim;

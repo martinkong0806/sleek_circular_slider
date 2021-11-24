@@ -86,15 +86,31 @@ class ValueChangedAnimationManager {
                 initialValue, oldValue ?? minValue, minValue, maxValue))
         .toInt();
 
+
     _animController.duration = Duration(milliseconds: duration);
 
     final curvedAnimation = CurvedAnimation(
       parent: _animController,
       curve: Curves.easeOut,
     );
+    // print(_animation.value);
+
+    // _animation =
+    //     Tween<double>(begin: oldAngle ?? 0, end: angle).animate(curvedAnimation)
+    //       ..addListener(() {
+    //         print("${_animation.value} $oldAngle $angle");
+    //         valueChangedAnimation(_animation.value, _animationCompleted);
+    //       })
+    //       ..addStatusListener((status) {
+    //         if (status == AnimationStatus.completed) {
+    //           _animationCompleted = true;
+    //
+    //           _animController.reset();
+    //         }
+    //       });
 
     _animation =
-        Tween<double>(begin: oldAngle ?? 0, end: angle).animate(curvedAnimation)
+        Tween<double>(begin: 0, end: 50).animate(curvedAnimation)
           ..addListener(() {
             valueChangedAnimation(_animation.value, _animationCompleted);
           })
@@ -105,18 +121,6 @@ class ValueChangedAnimationManager {
               _animController.reset();
             }
           });
-    // _animation =
-    //     Tween<double>(begin: 233, end: 50).animate(curvedAnimation)
-    //       ..addListener(() {
-    //         valueChangedAnimation(_animation.value, _animationCompleted);
-    //       })
-    //       ..addStatusListener((status) {
-    //         if (status == AnimationStatus.completed) {
-    //           _animationCompleted = true;
-    //
-    //           _animController.reset();
-    //         }
-    //       });
     _animController.forward();
   }
 
