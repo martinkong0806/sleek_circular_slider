@@ -66,9 +66,9 @@ class ValueChangedAnimationManager {
   });
 
   late Animation<double> _animation;
-  late AnimationController _animController = AnimationController(vsync: tickerProvider);
+  late AnimationController _animController =
+      AnimationController(vsync: tickerProvider);
   bool _animationCompleted = false;
-
 
   void animate(
       {required double initialValue,
@@ -77,15 +77,11 @@ class ValueChangedAnimationManager {
       double? oldAngle,
       required ValueChangeAnimation valueChangedAnimation}) {
     _animationCompleted = false;
-    print("""initialValue $initialValue,
-    oldValue $oldValue,
-    angle $angle,
-    oldAngle $oldAngle""");
+
     final duration = (durationMultiplier *
             valueToDuration(
                 initialValue, oldValue ?? minValue, minValue, maxValue))
         .toInt();
-
 
     _animController.duration = Duration(milliseconds: duration);
 
@@ -93,34 +89,23 @@ class ValueChangedAnimationManager {
       parent: _animController,
       curve: Curves.easeOut,
     );
-    // print(_animation.value);
 
-    // _animation =
-    //     Tween<double>(begin: oldAngle ?? 0, end: angle).animate(curvedAnimation)
-    //       ..addListener(() {
-    //         print("${_animation.value} $oldAngle $angle");
-    //         valueChangedAnimation(_animation.value, _animationCompleted);
-    //       })
-    //       ..addStatusListener((status) {
-    //         if (status == AnimationStatus.completed) {
-    //           _animationCompleted = true;
-    //
-    //           _animController.reset();
-    //         }
-    //       });
 
     _animation =
-        Tween<double>(begin: 0, end: 50).animate(curvedAnimation)
+        Tween<double>(begin: oldAngle ?? 0, end: angle).animate(curvedAnimation)
           ..addListener(() {
+
             valueChangedAnimation(_animation.value, _animationCompleted);
           })
           ..addStatusListener((status) {
             if (status == AnimationStatus.completed) {
               _animationCompleted = true;
-
+    
               _animController.reset();
             }
           });
+
+    
     _animController.forward();
   }
 

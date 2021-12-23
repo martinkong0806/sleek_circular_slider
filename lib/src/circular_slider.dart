@@ -114,7 +114,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   @override
   void didUpdateWidget(SleekCircularSlider oldWidget) {
     _setupPainter(passive: true);
-    // print(widget.externalRestrictions!);
+
     if (oldWidget.angle != widget.angle &&
         _currentAngle?.toStringAsFixed(4) != widget.angle.toStringAsFixed(4)) {
       _animate();
@@ -124,11 +124,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
   }
 
   void _animate() {
-    // print(""""
-    //
-    // initialValue: ${widget.initialValue},
-    // angle: ${widget.angle},
-    // """);
+
     if (!widget.appearance.animationEnabled || widget.appearance.spinnerMode) {
       _setupPainter();
       _updateOnChange();
@@ -153,7 +149,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         oldValue: _oldWidgetValue,
         valueChangedAnimation: ((double anim, bool animationCompleted) {
           _animationInProgress = !animationCompleted;
-          // print(anim);
+
           setState(() {
             if (!animationCompleted) {
               _currentAngle = anim;
@@ -270,7 +266,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
           defaultAngle: defaultAngle,
           counterClockwise: counterClockwise);
 
-      print(angle-widget.externalRestrictions![0]+20);
+
       if (((_currentAngle! - angle) % 360 > 20)
           && ((angle - _startAngleOffset ).abs() % 360< 20 || (angle - _startAngleOffset ).abs() % 360>340)
       ) {

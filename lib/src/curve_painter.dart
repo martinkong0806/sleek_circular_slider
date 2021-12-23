@@ -148,10 +148,7 @@ class _CurvePainter extends CustomPainter {
     final _startAngleOffset = ignoreAngle ? 0 :startAngleOffset;
     final temp = angle%360;
     final finalAngle = temp > _startAngleOffset ? temp : temp+360;
-    // print("""
-    //     start Angle : $startAngleOffset
-    //     end Angle : $finalAngle
-    //     """);
+
 
     canvas.drawArc(
         Rect.fromCircle(center: center!, radius: radius),
@@ -160,12 +157,7 @@ class _CurvePainter extends CustomPainter {
         false,
         paint);
 
-    // canvas.drawArc(
-    //     Rect.fromCircle(center: center!, radius: radius),
-    //     degreeToRadians(spinnerMode ? 0 : startAngle + _startAngleOffset),
-    //     degreeToRadians(range + finalAngle - _startAngleOffset),
-    //     false,
-    //     paint);
+
 
   }
 
@@ -183,16 +175,6 @@ class _CurvePainter extends CustomPainter {
     final _startAngleOffset = ignoreAngle ? 0 :startAngleOffset;
     final temp = angle%360;
     final finalAngle = temp > _startAngleOffset ? temp : temp+360;
-    // print("""
-    // start Angle : $startAngleOffset
-    // end Angle : $finalAngle
-    // """);
-    // canvas.drawArc(
-    //     Rect.fromCircle(center: center!, radius: radius),
-    //     degreeToRadians(spinnerMode ? 0 : startAngle + _startAngleOffset),
-    //     degreeToRadians(spinnerMode ? 360 :  finalAngle -_startAngleOffset),
-    //     false,
-    //     paint);
 
     canvas.drawArc(
         Rect.fromCircle(center: center!, radius: radius),

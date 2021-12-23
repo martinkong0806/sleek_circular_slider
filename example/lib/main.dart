@@ -14,8 +14,6 @@
 //   }
 // }
 
-
-
 // Copyright 2019 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -27,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
+import 'multi_track.dart';
 
 void main() {
   runApp(
@@ -40,8 +39,8 @@ void main() {
       // Initialize the model in the builder. That way, Provider
       // can own Counter's lifecycle, making sure to call `dispose`
       // when not needed anymore.
-      create: (context) => Counter(),
-      child: const MyApp(),
+      create: (context) => MultiTrackNotifier(),
+      child: const MultiTrackApp(),
     ),
   );
 }
@@ -55,30 +54,37 @@ class Counter with ChangeNotifier {
   List<double> chargeTime = [timeToInt(5, 0), timeToInt(9, 0)];
 
   void randomise() {
-    chargeTime = [timeToInt(Random().nextInt(23).toDouble(), Random().nextInt(59).toDouble()), timeToInt(Random().nextInt(23).toDouble(), Random().nextInt(59).toDouble())];
+    chargeTime = [
+      timeToInt(
+          Random().nextInt(23).toDouble(), Random().nextInt(59).toDouble()),
+      timeToInt(
+          Random().nextInt(23).toDouble(), Random().nextInt(59).toDouble())
+    ];
+    dischargeTime = [chargeTime[1], chargeTime[0]];
     notifyListeners();
   }
-  void moveInter(s,e,p) {
-    chargeTime =[s,e];
-    if((dischargeTime[1]-chargeTime[0])%1440< 80) {
-      dischargeTime[1]=s;
+
+  void moveInter(s, e, p) {
+    chargeTime = [s, e];
+    if ((dischargeTime[1] - chargeTime[0]) % 1440 < 80) {
+      dischargeTime[1] = s;
     }
-    if(((chargeTime[1]-dischargeTime[0]))%1440<80){
-      dischargeTime[0]=e;
-    }
-    notifyListeners();
-  }
-  void moveOuter(s,e,p) {
-    dischargeTime =[s,e];
-    if((dischargeTime[1]-chargeTime[0])%1440< 80){
-      chargeTime[0]=e;
-    }
-    if(((chargeTime[1]-dischargeTime[0]))%1440<80){
-      chargeTime[1]=s;
+    if (((chargeTime[1] - dischargeTime[0])) % 1440 < 80) {
+      dischargeTime[0] = e;
     }
     notifyListeners();
   }
 
+  void moveOuter(s, e, p) {
+    dischargeTime = [s, e];
+    if ((dischargeTime[1] - chargeTime[0]) % 1440 < 80) {
+      chargeTime[0] = e;
+    }
+    if (((chargeTime[1] - dischargeTime[0])) % 1440 < 80) {
+      chargeTime[1] = s;
+    }
+    notifyListeners();
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -108,18 +114,16 @@ class MyHomePage extends StatelessWidget {
       body: Container(
         color: Colors.black,
         child: Column(
-          mainAxisAlignment:  MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Stack(
               children: <Widget>[
-
                 Consumer<Counter>(
                   builder: (context, counter, child) => Center(
                     child: SleekCircularSlider(
-
                       onChange: (s, e, p) async {
                         var counter = context.read<Counter>();
-                        counter.moveOuter(s,e,p);
+                        counter.moveOuter(s, e, p);
                       },
                       onChangeStart: (s, e, p) {},
                       onChangeEnd: (s, e, p) {},
@@ -137,11 +141,10 @@ class MyHomePage extends StatelessWidget {
                       innerWidget: (double value) {
                         return Center(
                           child: SleekCircularSlider(
-                            onChangeStart: (s, e, p) {
-                            },
+                            onChangeStart: (s, e, p) {},
                             onChange: (s, e, p) async {
                               var counter = context.read<Counter>();
-                              counter.moveInter(s,e,p);
+                              counter.moveInter(s, e, p);
                             },
                             onChangeEnd: (s, e, p) {
                               // print("""
@@ -151,11 +154,14 @@ class MyHomePage extends StatelessWidget {
                               // """);
                             },
                             innerWidget: (double value) {
-                              return Center(child: Column(
+                              return Center(
+                                  child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('${doubleToTime(counter.chargeTime[0])} ${doubleToTime(counter.chargeTime[1])}'),
-                                  Text('${doubleToTime(counter.dischargeTime[0])} ${doubleToTime(counter.dischargeTime[1])}'),
+                                  Text(
+                                      '${doubleToTime(counter.chargeTime[0])} ${doubleToTime(counter.chargeTime[1])}'),
+                                  Text(
+                                      '${doubleToTime(counter.dischargeTime[0])} ${doubleToTime(counter.dischargeTime[1])}'),
                                 ],
                               ));
                             },
@@ -163,7 +169,8 @@ class MyHomePage extends StatelessWidget {
                                 customWidths: customWidth02,
                                 customColors: customColors02,
                                 startAngle: 270,
-                                startAngleOffset: intToDeg(counter.chargeTime[0]),
+                                startAngleOffset:
+                                    intToDeg(counter.chargeTime[0]),
                                 angleRange: 360,
                                 size: 290.0,
                                 animationEnabled: true),
@@ -172,13 +179,16 @@ class MyHomePage extends StatelessWidget {
                             touchOnTrack: true,
                             initialStart: counter.chargeTime[0],
                             initialValue: counter.chargeTime[1],
-                            externalRestrictions: counter.dischargeTime.map( (x)=>intToDeg(x)).toList(),
+                            externalRestrictions: counter.dischargeTime
+                                .map((x) => intToDeg(x))
+                                .toList(),
                           ),
                         );
                       },
                       initialStart: counter.dischargeTime[0],
                       initialValue: counter.dischargeTime[1],
-                      externalRestrictions: counter.chargeTime.map( (x)=>intToDeg(x)).toList(),
+                      externalRestrictions:
+                          counter.chargeTime.map((x) => intToDeg(x)).toList(),
                     ),
                   ),
                 ),
@@ -226,25 +236,31 @@ class MyHomePage extends StatelessWidget {
                 //     ),
                 //   ),
                 // ),
-
               ],
             ),
             Consumer<Counter>(
-              builder: (context, counter, child) => Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Charge Time : From ${timeToString(doubleToTime(counter.chargeTime[0]))} To  ${timeToString(doubleToTime(counter.chargeTime[1]))}',style: GoogleFonts.montserrat(
-                      textStyle: TextStyle(color: Colors.white, letterSpacing: .5),
-                    ),),
-                    Text('Discharge Time : From ${timeToString(doubleToTime(counter.dischargeTime[0]))} To ${timeToString(doubleToTime(counter.dischargeTime[1]))}',style: GoogleFonts.montserrat(
-                      textStyle: TextStyle(color: Colors.white, letterSpacing: .5),
-                    ), ),
-                  ],
-                ),
-              )
-            ),
+                builder: (context, counter, child) => Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Charge Time : From ${timeToString(doubleToTime(counter.chargeTime[0]))} To  ${timeToString(doubleToTime(counter.chargeTime[1]))}',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                  color: Colors.white, letterSpacing: .5),
+                            ),
+                          ),
+                          Text(
+                            'Discharge Time : From ${timeToString(doubleToTime(counter.dischargeTime[0]))} To ${timeToString(doubleToTime(counter.dischargeTime[1]))}',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                  color: Colors.white, letterSpacing: .5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
           ],
         ),
       ),
@@ -275,9 +291,10 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-String timeToString(List<int> val){
-  String hr =  val[0]>9 ? '${val[0]}' : '0${val[0]}';
-  String min =  val[1]>9 ? '${val[1]}' : '0${val[1]}';
+
+String timeToString(List<int> val) {
+  String hr = val[0] > 9 ? '${val[0]}' : '0${val[0]}';
+  String min = val[1] > 9 ? '${val[1]}' : '0${val[1]}';
 
   return '$hr : $min';
 }
@@ -289,12 +306,13 @@ double intToDeg(double i) {
 double timeToInt(double hr, double min) {
   return hr * 60 + min;
 }
+
 final customWidth02 =
-CustomSliderWidths(trackWidth: 5, progressBarWidth: 15, shadowWidth: 30);
+    CustomSliderWidths(trackWidth: 5, progressBarWidth: 15, shadowWidth: 30);
 final customColors01 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.5),
     trackColor: HexColor('#000000').withOpacity(0.1),
-    progressBarColor:  HexColor('#76E2FF').withOpacity(0.5),
+    progressBarColor: HexColor('#76E2FF').withOpacity(0.5),
     // progressBarColors: [
     //   HexColor('#76E2FF').withOpacity(0.5),
     //   // HexColor('#4E09ED').withOpacity(0.5),
@@ -304,11 +322,10 @@ final customColors01 = CustomSliderColors(
     shadowColor: HexColor('#55B3E4'),
     shadowMaxOpacity: 0.02);
 
-
 final customColors02 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.5),
     trackColor: HexColor('#000000').withOpacity(0.1),
-    progressBarColor:  HexColor('#4E09ED').withOpacity(0.5),
+    progressBarColor: HexColor('#4E09ED').withOpacity(0.5),
     // progressBarColors: [
     //   HexColor('#76E2FF').withOpacity(0.5),
     //   // HexColor('#4E09ED').withOpacity(0.5),
