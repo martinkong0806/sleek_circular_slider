@@ -52,6 +52,35 @@ double calculateRawAngle(
     {required double startAngle,
     required double angleRange,
     required double selectedAngle,
+    required double startAngleOffset,
+    bool counterClockwise = false}) {
+  // print((radiansToDegrees(selectedAngle) - startAngleOffset + 360) % 360);
+  double angle =
+      (radiansToDegrees(selectedAngle) - startAngleOffset + 360) % 360;
+
+  double calcAngle = 0.0;
+  // if (!counterClockwise) {
+  //   if (angle >= startAngle && angle <= 360.0) {
+  //     calcAngle = angle - startAngle;
+  //   } else {
+  //     calcAngle = 360.0 - startAngle + angle;
+  //   }
+  // } else {
+  //   if (angle <= startAngle) {
+  //     calcAngle = startAngle - angle;
+  //   } else {
+  //     calcAngle = 360.0 - angle + startAngle;
+  //   }
+  // }
+  // return calcAngle;
+  return angle;
+}
+
+double calculateRawAngleNeg90(
+    {required double startAngle,
+    required double angleRange,
+    required double selectedAngle,
+    required double startOffset,
     bool counterClockwise = false}) {
   double angle = radiansToDegrees(selectedAngle);
 
@@ -72,38 +101,12 @@ double calculateRawAngle(
   return calcAngle;
 }
 
-double calculateRawAngleNeg90(
-    {required double startAngle,
-      required double angleRange,
-      required double selectedAngle,
-      required double startOffset,
-      bool counterClockwise = false}) {
-  double angle = radiansToDegrees(selectedAngle);
-
-
-
-  double calcAngle = 0.0;
-  if (!counterClockwise) {
-    if (angle >= startAngle  && angle <= 360.0) {
-      calcAngle = angle - startAngle;
-    } else {
-      calcAngle = 360.0 - startAngle + angle;
-    }
-  } else {
-    if (angle <= startAngle) {
-      calcAngle = startAngle - angle;
-    } else {
-      calcAngle = 360.0 - angle + startAngle;
-    }
-  }
-  return calcAngle;
-}
-
 double calculateAngle(
     {required double startAngle,
     required double angleRange,
     required selectedAngle,
     required defaultAngle,
+    required startAngleOffset,
     bool counterClockwise = false}) {
   if (selectedAngle == null) {
     return defaultAngle;
@@ -111,10 +114,10 @@ double calculateAngle(
 
   double calcAngle = calculateRawAngle(
       startAngle: startAngle,
+      startAngleOffset: startAngleOffset,
       angleRange: angleRange,
       selectedAngle: selectedAngle,
       counterClockwise: counterClockwise);
-
 
   if (calcAngle - angleRange > (360.0 - angleRange) * 0.5) {
     return 0.0;
@@ -127,11 +130,11 @@ double calculateAngle(
 
 double calculateAngleWithNeg(
     {required double startAngle,
-      required double angleRange,
-      required selectedAngle,
-      required startOffset,
-      required defaultAngle,
-      bool counterClockwise = false}) {
+    required double angleRange,
+    required selectedAngle,
+    required startOffset,
+    required defaultAngle,
+    bool counterClockwise = false}) {
   if (selectedAngle == null) {
     return defaultAngle;
   }
@@ -142,9 +145,6 @@ double calculateAngleWithNeg(
       selectedAngle: selectedAngle,
       startOffset: startOffset,
       counterClockwise: counterClockwise);
-
-  // print(calcAngle);
-
 
   if (calcAngle - angleRange > (360.0 - angleRange) * 0.5) {
     return 0.0;
@@ -157,12 +157,14 @@ double calculateAngleWithNeg(
 
 bool isAngleWithinRange(
     {required double startAngle,
+    required double startAngleOffset,
     required double angleRange,
     required touchAngle,
     required previousAngle,
     bool counterClockwise = false}) {
   double calcAngle = calculateRawAngle(
       startAngle: startAngle,
+      startAngleOffset: startAngleOffset,
       angleRange: angleRange,
       selectedAngle: touchAngle,
       counterClockwise: counterClockwise);
@@ -175,6 +177,7 @@ bool isAngleWithinRange(
 
 int valueToDuration(double value, double previous, double min, double max) {
   final divider = (max - min) / 100;
+
   return divider != 0 ? (value - previous).abs() ~/ divider * 15 : 0;
 }
 

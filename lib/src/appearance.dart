@@ -32,7 +32,7 @@ class CircularSliderAppearance {
   }
 
   final double size;
-  final double startAngle;
+  // final double startAngle;
   final double startAngleOffset;
   final double angleRange;
   final bool animationEnabled;
@@ -142,7 +142,7 @@ class CircularSliderAppearance {
       {this.customWidths,
       this.customColors,
       this.size = _defaultSize,
-      this.startAngle = _defaultStartAngle,
+      // this.startAngle = _defaultStartAngle,
       this.startAngleOffset = _defaultStartAngleOffset,
       this.angleRange = _defaultAngleRange,
       this.infoProperties,

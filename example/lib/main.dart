@@ -130,7 +130,7 @@ class MyHomePage extends StatelessWidget {
                       appearance: CircularSliderAppearance(
                           customWidths: customWidth02,
                           customColors: customColors01,
-                          startAngle: 270,
+                          // startAngle: 270,
                           angleRange: 360,
                           startAngleOffset: intToDeg(counter.dischargeTime[0]),
                           size: 350.0,
@@ -168,7 +168,7 @@ class MyHomePage extends StatelessWidget {
                             appearance: CircularSliderAppearance(
                                 customWidths: customWidth02,
                                 customColors: customColors02,
-                                startAngle: 270,
+                                // startAngle: 270,
                                 startAngleOffset:
                                     intToDeg(counter.chargeTime[0]),
                                 angleRange: 360,
@@ -177,16 +177,16 @@ class MyHomePage extends StatelessWidget {
                             min: 0,
                             max: 60 * 24,
                             touchOnTrack: true,
-                            initialStart: counter.chargeTime[0],
-                            initialValue: counter.chargeTime[1],
+                            startValue: counter.chargeTime[0],
+                            sweepValue: counter.chargeTime[1],
                             externalRestrictions: counter.dischargeTime
                                 .map((x) => intToDeg(x))
                                 .toList(),
                           ),
                         );
                       },
-                      initialStart: counter.dischargeTime[0],
-                      initialValue: counter.dischargeTime[1],
+                      startValue: counter.dischargeTime[0],
+                      sweepValue: counter.dischargeTime[1],
                       externalRestrictions:
                           counter.chargeTime.map((x) => intToDeg(x)).toList(),
                     ),

@@ -37,7 +37,7 @@ class _RandomValuePageState extends State<RandomValuePage> {
                   children: [
                     SleekCircularSlider(
                       appearance: appearance01,
-                      initialValue: _currentValue.toDouble(),
+                      sweepValue: _currentValue.toDouble(),
                     ),
                     MaterialButton(
                       height: 35.0,
@@ -80,6 +80,6 @@ final CircularSliderAppearance appearance01 = CircularSliderAppearance(
     customWidths: customWidth01,
     customColors: customColors01,
     infoProperties: info,
-    startAngle: 180,
+    // startAngle: 180,
     angleRange: 180,
     size: 250.0);

@@ -49,7 +49,7 @@ class ExamplePage extends StatelessWidget {
             min: viewModel.min,
             max: viewModel.max,
             touchOnTrack: viewModel.touchOnTrack,
-            initialValue: viewModel.value,
+            sweepValue: viewModel.value,
           )),
         ),
       ),

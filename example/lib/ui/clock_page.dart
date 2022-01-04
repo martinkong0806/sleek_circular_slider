@@ -67,7 +67,7 @@ class ClockWidget extends StatelessWidget {
       appearance: appearance01,
       min: 0,
       max: 59,
-      initialValue: seconds,
+      sweepValue: seconds,
       innerWidget: (double value) {
         return Align(
           alignment: Alignment.center,
@@ -75,7 +75,7 @@ class ClockWidget extends StatelessWidget {
             appearance: appearance02,
             min: 0,
             max: 59,
-            initialValue: minutes,
+            sweepValue: minutes,
             innerWidget: (double value) {
               return Align(
                 alignment: Alignment.center,
@@ -83,7 +83,7 @@ class ClockWidget extends StatelessWidget {
                   appearance: appearance03,
                   min: 0,
                   max: 11,
-                  initialValue: hours % 12,
+                  sweepValue: hours % 12,
                   innerWidget: (double value) {
                     final h = hours.toInt() < 12
                         ? 'AM ${hours.toInt() % 12}'
@@ -126,7 +126,7 @@ final customColors01 = CustomSliderColors(
 final CircularSliderAppearance appearance01 = CircularSliderAppearance(
     customWidths: customWidth01,
     customColors: customColors01,
-    startAngle: 270,
+    // startAngle: 270,
     angleRange: 360,
     size: 350.0,
     animationEnabled: false);
@@ -144,7 +144,7 @@ final customColors02 = CustomSliderColors(
 final CircularSliderAppearance appearance02 = CircularSliderAppearance(
     customWidths: customWidth02,
     customColors: customColors02,
-    startAngle: 270,
+    // startAngle: 270,
     angleRange: 360,
     size: 290.0,
     animationEnabled: false);
@@ -162,7 +162,7 @@ final customColors03 = CustomSliderColors(
 final CircularSliderAppearance appearance03 = CircularSliderAppearance(
     customWidths: customWidth03,
     customColors: customColors03,
-    startAngle: 270,
+    // startAngle: 270,
     angleRange: 360,
     size: 210.0,
     animationEnabled: false);

@@ -4,8 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:example/utils.dart';
 
 class MultiTrackNotifier with ChangeNotifier {
-  List<double> dischargeTime1 = [timeToInt(1, 30), timeToInt(4, 50)];
+  List<double> dischargeTime1 = [timeToInt(1, 0), timeToInt(2, 30)];
   List<double> dischargeTime2 = [timeToInt(5, 0), timeToInt(9, 0)];
+
+  void randomize() {
+    dischargeTime1 = [timeToInt(4, 50), timeToInt(9, 50)];
+    notifyListeners();
+  }
 }
 
 class MultiTrackApp extends StatelessWidget {
@@ -47,11 +52,12 @@ class MultiTrackNotifierPage extends StatelessWidget {
                   onChangeStart: (s, e, p) {},
                   onChangeEnd: (s, e, p) {},
                   appearance: CircularSliderAppearance(
+                      animDurationMultiplier: 3,
                       customWidths: customWidth02,
                       customColors: customColors01,
-                      startAngle: 270,
+                      startAngleOffset: 270,
                       angleRange: 360,
-                      startAngleOffset: intToDeg(counter.dischargeTime1[0]),
+                      // startAngleOffset: intToDeg(counter.dischargeTime1[0]),
                       size: 350.0,
                       animationEnabled: true),
                   min: 0,
@@ -60,8 +66,8 @@ class MultiTrackNotifierPage extends StatelessWidget {
                   innerWidget: (double value) {
                     return Container();
                   },
-                  initialStart: counter.dischargeTime1[0],
-                  initialValue: counter.dischargeTime1[1],
+                  startValue: counter.dischargeTime1[0],
+                  sweepValue: counter.dischargeTime1[1],
                   // externalRestrictions:
                   //     counter.chargeTime.map((x) => intToDeg(x)).toList(),
                 ),
@@ -72,24 +78,9 @@ class MultiTrackNotifierPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // You can access your providers anywhere you have access
-          // to the context. One way is to use Provider.of<Counter>(context).
-          //
-          // The provider package also defines extension methods on context
-          // itself. You can call context.watch<Counter>() in a build method
-          // of any widget to access the current state of Counter, and to ask
-          // Flutter to rebuild your widget anytime Counter changes.
-          //
-          // You can't use context.watch() outside build methods, because that
-          // often leads to subtle bugs. Instead, you should use
-          // context.read<Counter>(), which gets the current state
-          // but doesn't ask Flutter for future rebuilds.
-          //
-          // Since we're in a callback that will be called whenever the user
-          // taps the FloatingActionButton, we are not in the build method here.
-          // We should use context.read().
           var counter = context.read<MultiTrackNotifier>();
-          // counter.randomise();
+
+          counter.randomize();
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

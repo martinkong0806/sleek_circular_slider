@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'utils.dart';
+import 'dart:math' as math;
 
 typedef void SpinAnimation(
     double animation1, double animation2, double animation3);
@@ -26,14 +27,13 @@ class SpinAnimationManager {
         spinAnimation(_animation1.value, _animation2.value, _animation3.value);
       })
       ..repeat();
-    _animation1 = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    _animation1 = Tween(begin: 0.0, end: 0.0).animate(CurvedAnimation(
         parent: _animController,
         curve: const Interval(0.5, 1.0, curve: Curves.linear)));
-    _animation2 = Tween<double>(begin: -80.0, end: 100.0).animate(
-        CurvedAnimation(
-            parent: _animController,
-            curve: const Interval(0, 1.0, curve: Curves.linear)));
-    _animation3 = Tween(begin: 0.0, end: 360.0).animate(CurvedAnimation(
+    _animation2 = Tween<double>(begin: 50.0, end: 50.0).animate(CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0, 1.0, curve: Curves.linear)));
+    _animation3 = Tween(begin: 100.0, end: 200.0).animate(CurvedAnimation(
         parent: _animController,
         curve: const Interval(0.0, 1.0, curve: SpinnerCurve())));
   }
@@ -72,40 +72,43 @@ class ValueChangedAnimationManager {
 
   void animate(
       {required double initialValue,
-      double? oldValue,
+      double? oldStartAngle,
+      double? oldStartValue,
+      double? oldSweepAngle,
+      double? oldSweepValue,
       required double angle,
-      double? oldAngle,
+      
       required ValueChangeAnimation valueChangedAnimation}) {
     _animationCompleted = false;
 
-    final duration = (durationMultiplier *
+
+
+    final sweepDuration = (durationMultiplier *
             valueToDuration(
-                initialValue, oldValue ?? minValue, minValue, maxValue))
+                initialValue, oldSweepValue ?? minValue, minValue, maxValue))
         .toInt();
 
-    _animController.duration = Duration(milliseconds: duration);
+    _animController.duration = Duration(milliseconds: sweepDuration);
+
 
     final curvedAnimation = CurvedAnimation(
       parent: _animController,
       curve: Curves.easeOut,
     );
 
-
     _animation =
-        Tween<double>(begin: oldAngle ?? 0, end: angle).animate(curvedAnimation)
+        Tween<double>(begin: oldSweepAngle ?? 0, end: angle).animate(curvedAnimation)
           ..addListener(() {
-
             valueChangedAnimation(_animation.value, _animationCompleted);
           })
           ..addStatusListener((status) {
             if (status == AnimationStatus.completed) {
               _animationCompleted = true;
-    
+
               _animController.reset();
             }
           });
 
-    
     _animController.forward();
   }
 
