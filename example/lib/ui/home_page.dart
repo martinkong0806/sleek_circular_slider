@@ -9,7 +9,19 @@ import 'example_page.dart';
 import 'random_value_page.dart';
 
 /// Example 01
-final CircularSliderAppearance appearance01 = CircularSliderAppearance();
+final CircularSliderAppearance appearance01 = CircularSliderAppearance(
+  startAngle: 180,
+  angleRange: 180,
+  customWidths: CustomSliderWidths(
+    handlerSize: 0,
+    trackWidth: 20,
+    progressBarWidth: 20),
+  customColors: CustomSliderColors(
+    hideShadow: true,
+    trackColor: Colors.grey,
+    progressBarColor: Colors.green,
+    dotColor: Colors.green)
+);
 final viewModel01 = ExampleViewModel(
     appearance: appearance01,
     min: 0,

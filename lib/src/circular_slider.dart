@@ -17,7 +17,6 @@ part 'custom_gesture_recognizer.dart';
 typedef void OnChange(double value);
 typedef Widget InnerWidget(double percentage);
 
-
 class SleekCircularSlider extends StatefulWidget {
   final double initialValue;
   final double min;
@@ -209,6 +208,7 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
 
   Widget _buildRotatingPainter({double? rotation, required Size size}) {
     if (rotation != null) {
+      
       return Transform(
           transform: Matrix4.identity()..rotateZ((rotation) * 5 * math.pi / 6),
           alignment: FractionalOffset.center,
@@ -302,17 +302,15 @@ class _SleekCircularSliderState extends State<SleekCircularSlider>
         ? widget.appearance.progressBarWidth
         : 25.0;
 
-    if(!widget.touchOnTrack) {
-      Offset handlerOffset = degreesToCoordinates(
-          _painter!.center!, -math.pi / 2 + _startAngle + _currentAngle! + 1.5,
-          _painter!.radius);
+    if (!widget.touchOnTrack) {
+      Offset handlerOffset = degreesToCoordinates(_painter!.center!,
+          -math.pi / 2 + _startAngle + _currentAngle! + 1.5, _painter!.radius);
       if (!Rect.fromCenter(
-          center: position, width: touchWidth, height: touchWidth).contains(
-          handlerOffset)) {
+              center: position, width: touchWidth, height: touchWidth)
+          .contains(handlerOffset)) {
         return false;
       }
     }
-
 
     if (isPointAlongCircle(
         position, _painter!.center!, _painter!.radius, touchWidth)) {

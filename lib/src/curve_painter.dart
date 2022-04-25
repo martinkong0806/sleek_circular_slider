@@ -31,12 +31,12 @@ class _CurvePainter extends CustomPainter {
       );
       trackPaint = Paint()
         ..shader = trackGradient.createShader(progressBarRect)
-        ..strokeCap = StrokeCap.round
+        ..strokeCap = StrokeCap.butt
         ..style = PaintingStyle.stroke
         ..strokeWidth = appearance.trackWidth;
     } else {
       trackPaint = Paint()
-        ..strokeCap = StrokeCap.round
+        ..strokeCap = StrokeCap.butt
         ..style = PaintingStyle.stroke
         ..strokeWidth = appearance.trackWidth
         ..color = appearance.trackColor;
@@ -91,7 +91,7 @@ class _CurvePainter extends CustomPainter {
 
     final progressBarPaint = Paint()
       ..shader = progressBarGradient.createShader(progressBarRect)
-      ..strokeCap = StrokeCap.round
+      ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.stroke
       ..strokeWidth = appearance.progressBarWidth;
     drawCircularArc(canvas: canvas, size: size, paint: progressBarPaint);
@@ -130,7 +130,7 @@ class _CurvePainter extends CustomPainter {
         ((appearance.shadowWidth - appearance.progressBarWidth) ~/ shadowStep));
     final opacityStep = maxOpacity / repetitions;
     final shadowPaint = Paint()
-      ..strokeCap = StrokeCap.round
+      ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.stroke;
     for (int i = 1; i <= repetitions; i++) {
       shadowPaint.strokeWidth = appearance.progressBarWidth + i * shadowStep;
